@@ -5,7 +5,7 @@
 @section('card-class', 'left')
 
 @section('content')
-<div class="card-login left p-5">
+<div class="card-login left">
     <div class="icon">
         <i class="fa-solid fa-circle-check"></i>
     </div>
@@ -48,11 +48,14 @@
                 <div class="col-md-12 flex justify-center">
                     <button class="btn btn-primary w-100" type="submit">Entrar</button>
                 </div>
+                <div class="col-md-12 text-center mt-3 d-md-none">
+                    <a href="{{ route('register') }}">Não possui cadastro?</a>
+                </div>
             </div>
         </div>
     </form>
 </div>
-<div class="card-login right p-5 bg-primary">
+<div class="card-login right bg-primary d-none d-md-flex">
     <div class="text-white">
         <div class="conteiner">
             <div class="col-md-12 col align-items-center" style="text-align: center">
