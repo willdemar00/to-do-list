@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\ImageService;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
@@ -16,7 +19,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        return view('frontend.profile.form', [
             'user' => $request->user(),
         ]);
     }
@@ -26,15 +29,30 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        try {
+            $user->fill($request->validated());
+
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+
+            if ($request->hasFile('image')) {
+                if ($user->image) {
+                    ImageService::updateImage($request->file('image'), $user);
+                } else {
+                    ImageService::storeImage($request->file('image'), $user);
+                }
+            }
+
+            $user->save();
+
+            return Redirect::route('profile.edit')->with('flash_success', 'Perfil atualizado com sucesso.');
+        } catch (Exception $e) {
+            Log::error('Falha na atualização do perfil: ' . $e->getMessage());
+            return Redirect::route('profile.edit')->with('flash_error', 'Falha ao atualizar o perfil.');
         }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**

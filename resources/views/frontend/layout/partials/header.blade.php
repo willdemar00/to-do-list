@@ -27,7 +27,7 @@
         </section>
         <section>
             <div class="user-icon" hide-toggle="sidebar">
-                <img src="{{ asset('build/assets/img/Profile_avatar_placeholder.png') }}"
+                <img src="{{ empty(Auth::user()) ? asset('build/assets/img/Profile_avatar_placeholder.png') : Auth::user()->path_image }}"
                     alt="">
             </div>
             @include('frontend.layout.partials.sidebar')

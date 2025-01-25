@@ -18,15 +18,13 @@
         @method('patch')
 
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            <label class="form-label" for="name" :value="__('Name')">
+                <x-input name="name" type="text" :value="old('name', $user->name)" :attr="['class' => 'form-control mt-1 block w-full', 'required','autofocus', 'autocomplete' => 'name']"/>
         </div>
 
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+            <label class="form-label" for="email" :value="__('Email')">
+                <x-input name="email" type="email" :value="old('email', $user->email)" :attr="['class' => 'form-control mt-1 block w-full', 'required','autofocus', 'autocomplete' => 'username']"/>
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                 <div>
@@ -48,7 +46,9 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <button class="btn btn-primary" type="button">
+                {{ __('Save') }}
+            </button>
 
             @if (session('status') === 'profile-updated')
                 <p

@@ -51,6 +51,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function getPathImageAttribute()
+    {
+        return !empty($this->image) ? asset('storage/' . $this->image->path) : asset('build/assets/img/Profile_avatar_placeholder.png');
+    }
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
@@ -59,5 +64,10 @@ class User extends Authenticatable
     public function permissions(): Collection
     {
         return $this->roles->map->permissions->flatten()->pluck('name');
+    }
+
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
     }
 }
