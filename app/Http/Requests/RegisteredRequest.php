@@ -32,8 +32,8 @@ class RegisteredRequest extends FormRequest
                 Password::min(8) // mínimo de 8 caracteres
                     ->letters() // Deve conter pelo menos uma letra
                     ->numbers() // Deve conter pelo menos um número
-                    ->symbols() // Deve conter pelo menos um símbolo
-                    ->uncompromised(), // Verifica se a senha não foi vazada em um banco de dados público
+                    ->symbols(), // Deve conter pelo menos um símbolo
+                    // ->uncompromised(), // Verifica se a senha não foi vazada em um banco de dados público
                 'confirmed', // Garante que password_confirmation corresponde
             ],
         ];
