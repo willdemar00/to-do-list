@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\PasswordUpdateRequest;
 use App\Services\ImageService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
@@ -56,23 +58,50 @@ class ProfileController extends Controller
     }
 
     /**
+     * Update the user's password.
+     */
+    public function updatePassword(PasswordUpdateRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        try {
+            if (!Hash::check($request->current_password, $user->password)) {
+                return Redirect::route('profile.edit')->with('flash_error', 'Senha atual incorreta.');
+            }
+
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return Redirect::route('profile.edit')->with('flash_success', 'Senha atualizada com sucesso.');
+        } catch (Exception $e) {
+            Log::error('Falha na atualização da senha: ' . $e->getMessage());
+            return Redirect::route('profile.edit')->with('flash_error', 'Falha ao atualizar a senha.');
+        }
+    }
+
+    /**
      * Delete the user's account.
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
         $user = $request->user();
 
-        Auth::logout();
+        try {
+            if (!Hash::check($request->password, $user->password)) {
+                return Redirect::route('profile.edit')->with('flash_error', 'Senha incorreta.');
+            }
 
-        $user->delete();
+            Auth::logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+            $user->delete();
 
-        return Redirect::to('/');
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return Redirect::to('/');
+        } catch (Exception $e) {
+            Log::error('Falha na exclusão da conta: ' . $e->getMessage());
+            return Redirect::route('profile.edit')->with('flash_error', 'Falha ao excluir a conta.');
+        }
     }
 }
