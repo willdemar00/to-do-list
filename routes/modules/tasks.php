@@ -6,5 +6,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'verified'])->group( function(){
     Route::resource('tasks', TasksController::class);
     Route::get('users/search', [TasksController::class, 'searchUsers'])->name('users.search');
-
+    Route::post('tasks/update-status', [TasksController::class, 'updateStatus'])->name('tasks.updateStatus');
 });

@@ -63,7 +63,7 @@
                                 <div class="component-card">
                                     <div class="form-check m-0">
                                         <input class="form-check-input status" type="checkbox" value="{{ $task->id }}"
-                                            id="{{ $task->id }}" {{ $task->status == 1 ? 'checked' : '' }}>
+                                            id="{{ $task->id }}" {{ $task->status == App\Models\Tasks::STATUS_COMPLETED ? 'checked' : '' }}>
                                     </div>
                                     <label for="{{ $task->id }}" class="form-check-label text-truncate " style="cursor: pointer;">
                                         <strong class="task-title ">{{ $task->title }}</strong>
@@ -176,13 +176,34 @@
             $('.status').on('change', function() {
                 var componentCard = $(this).closest('.component-card');
                 var taskTitle = componentCard.find('.task-title');
-                if ($(this).is(':checked')) {
-                    componentCard.css('opacity', '0.4');
-                    taskTitle.css('text-decoration', 'line-through');
-                } else {
-                    componentCard.css('opacity', '1');
-                    taskTitle.css('text-decoration', 'none');
-                }
+                var taskId = $(this).val();
+                var status = $(this).is(':checked') ? '{{ App\Models\Tasks::STATUS_COMPLETED }}' : '{{ App\Models\Tasks::STATUS_PENDING }}';
+
+                $.ajax({
+                    url: '{{ route("tasks.updateStatus") }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: taskId,
+                        status: status
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            if (status === '{{ App\Models\Tasks::STATUS_COMPLETED }}') {
+                                componentCard.css('opacity', '0.4');
+                                taskTitle.css('text-decoration', 'line-through');
+                            } else {
+                                componentCard.css('opacity', '1');
+                                taskTitle.css('text-decoration', 'none');
+                            }
+                        } else {
+                            alert('Ocorreu um erro ao atualizar o status da tarefa.');
+                        }
+                    },
+                    error: function() {
+                        alert('Ocorreu um erro ao atualizar o status da tarefa.');
+                    }
+                });
             });
 
             // Aplicar opacidade inicial e tachado com base no status da caixa de seleção

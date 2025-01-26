@@ -95,14 +95,21 @@ class TasksController extends Controller
                 $userIds = explode(',', $request->input('selected_user_ids'));
 
                 if ($request->has('remove_responsible')) {
-                    $fields['responsible_id'] = $userIds[0];
-                    $userIds = array_diff($userIds, [$userIds[0]]);
+                    if (count($userIds) > 0) {
+                        $fields['responsible_id'] = $userIds[0];
+                        $userIds = array_diff($userIds, [$userIds[0]]);
+                    } else {
+                        DB::rollBack();
+                        return redirect()->back()->with('flash_error', 'Não é possível remover o responsável sem adicionar outras pessoas envolvidas.');
+                    }
                 }
 
                 $task->involved()->sync($userIds);
             } elseif ($request->has('remove_responsible')) {
                 DB::rollBack();
                 return redirect()->back()->with('flash_error', 'Não é possível remover o responsável sem adicionar outras pessoas envolvidas.');
+            } else {
+                $task->involved()->sync([]);
             }
 
             $task->update($fields);
@@ -156,5 +163,22 @@ class TasksController extends Controller
         });
 
         return response()->json($users);
+    }
+
+    /**
+     * Update the status of a task.
+     */
+    public function updateStatus(Request $request): JsonResponse
+    {
+        try {
+            $task = Tasks::findOrFail($request->input('id'));
+            $task->status = $request->input('status');
+            $task->save();
+
+            return response()->json(['success' => true]);
+        } catch (Exception $e) {
+            Log::error('Ocorreu um erro ao atualizar o status da tarefa: ' . $e->getMessage());
+            return response()->json(['success' => false], 500);
+        }
     }
 }

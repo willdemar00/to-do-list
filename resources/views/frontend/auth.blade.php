@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('build/assets/css/auth/login.css') }}">
     <link rel="stylesheet" href="{{ asset('build/assets/css/bootstrap.css') }}">
     <title>@yield('title') - {{ config('app.name', 'TaskFlow') }}</title>
+    @yield('styles')
 </head>
 
 <body>
