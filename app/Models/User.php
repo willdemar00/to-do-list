@@ -7,7 +7,9 @@ namespace App\Models;
 use App\Models\Acl\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -51,7 +53,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function getPathImageAttribute()
+    public function getPathImageAttribute(): string
     {
         return !empty($this->image) ? asset('storage/' . $this->image->path) : asset('build/assets/img/Profile_avatar_placeholder.png');
     }
@@ -66,8 +68,17 @@ class User extends Authenticatable
         return $this->roles->map->permissions->flatten()->pluck('name');
     }
 
-    public function image()
+    public function image(): MorphOne
     {
         return $this->morphOne(Image::class, 'imageable');
+    }
+
+    public function Tasks(): HasMany
+    {
+       return $this->hasMany(Tasks::class, 'responsible_id');
+    }
+    public function involved(): BelongsToMany
+    {
+        return $this->belongsToMany(Tasks::class, 'task_user', 'user_id', 'task_id');
     }
 }

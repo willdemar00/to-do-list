@@ -12,7 +12,7 @@
         @endcan
         <li>
             <a class="btn-menu" href="{{ route('tasks.index') }}" {{ Request::routeIs('tasks*') ? 'nav-active=true' : '' }}>
-                <i class="fa-solid fa-clipboard-list"></i> Tarefas</a>
+                <i class="fa-solid fa-list-check"></i> Tarefas</a>
         </li>
     </ul>
 </menu>
