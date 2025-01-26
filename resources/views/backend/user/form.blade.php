@@ -1,6 +1,6 @@
 @extends('frontend.app')
 
-@section('title', 'Adicionar Usuário')
+@section('title', isset($user) ? 'Editar Usuário' : 'Adicionar Usuário')
 
 @section('styles')
     <style>
@@ -63,10 +63,10 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <x-breadcrumb :items="[['name' => 'Início', 'route' => route('home')], ['name' => 'Usuários', 'route' => route('user.index')], ['name' => 'Adicionar Usuário']]" />
+                <x-breadcrumb :items="[['name' => 'Início', 'route' => route('home')], ['name' => 'Usuários', 'route' => route('user.index')], ['name' => isset($user) ? 'Editar Usuário' : 'Adicionar Usuário']]" />
             </div>
             <div class="col-md-12">
-                <h3>Adicionar Usuário</h3>
+                <h3>{{ isset($user) ? 'Editar Usuário' : 'Adicionar Usuário' }}</h3>
             </div>
         </div>
         <div class="card card-body p-4">
@@ -75,18 +75,21 @@
                     <h6 class="mb-2">Informações Pessoais</h6>
                 </div>
                 <hr>
-                <form method="POST" action="{{ route('user.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ isset($user) ? route('user.update', $user->id) : route('user.store') }}" enctype="multipart/form-data">
+                    @csrf
+                    @if(isset($user))
+                        @method('PUT')
+                    @endif
                     <div class="grid">
-                        <x-input-img />
+                        <x-input-img :user="$user ?? null" />
                         <div class="row">
-                            @csrf
                             <div class="col-md-6">
                                 <label for="name" class="form-label">Nome</label>
-                                <x-input name="name" type="text" :value="old('name', )" :attr="['class' => 'form-control', 'autocomplete' => 'name']" />
+                                <x-input name="name" type="text" :value="old('name', $user->name ?? '')" :attr="['class' => 'form-control', 'autocomplete' => 'name']" />
                             </div>
                             <div class="col-md-6">
                                 <label for="email" class="form-label">Email</label>
-                                <x-input name="email" type="email" :value="old('email')" :attr="['class' => 'form-control', 'autocomplete' => 'username']" />
+                                <x-input name="email" type="email" :value="old('email', $user->email ?? '')" :attr="['class' => 'form-control', 'autocomplete' => 'username']" />
                             </div>
                             <div class="col-md-6">
                                 <label for="password" class="form-label">Senha</label>
@@ -98,7 +101,7 @@
                             </div>
                             <div class="d-flex justify-content-end mt-3 gap-2">
                                 <a href="{{ route('user.index') }}" class="btn btn-secondary">Cancelar</a>
-                                <button type="submit" class="btn btn-primary">Salvar</button>
+                                <button type="submit" class="btn btn-primary">{{ isset($user) ? 'Atualizar' : 'Salvar' }}</button>
                             </div>
                         </div>
                     </div>

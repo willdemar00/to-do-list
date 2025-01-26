@@ -3,9 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisteredRequest;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use App\Services\ImageService;
 
 class UserController extends Controller
 {
@@ -29,30 +35,26 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(RegisteredRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $data['password'] = Hash::make($request->password);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+            $user = User::create($data);
 
-        return redirect()->route('user.index')->with('success', 'Usuário criado com sucesso.');
-    }
+            if ($request->hasFile('image')) {
+                ImageService::storeImage($request->file('image'), $user);
+            }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id): View
-    {
-        $user = User::findOrFail($id);
-        return view('backend.user.show', compact('user'));
+            DB::commit();
+            return redirect()->route('user.index')->with('flash_success', 'Usuário criado com sucesso.');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Falha ao criar o usuário: ' . $e->getMessage());
+            return redirect()->route('user.index')->with('flash_error', 'Falha ao criar o usuário.');
+        }
     }
 
     /**
@@ -69,9 +71,33 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
-        $user->update($request->all());
-        return redirect()->route('user.index')->with('success', 'Usuário atualizado com sucesso.');
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $data = $request->all();
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password);
+            } else {
+                unset($data['password']);
+            }
+
+            if ($request->hasFile('image')) {
+                if ($user->image) {
+                    ImageService::updateImage($request->file('image'), $user);
+                } else {
+                    ImageService::storeImage($request->file('image'), $user);
+                }
+            }
+
+            $user->update($data);
+
+            DB::commit();
+            return redirect()->route('user.index')->with('flash_success', 'Usuário atualizado com sucesso.');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Falha ao atualizar o usuário: ' . $e->getMessage());
+            return redirect()->route('user.index')->with('flash_error', 'Falha ao atualizar o usuário.');
+        }
     }
 
     /**
@@ -79,11 +105,17 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::findOrFail($id);
-        // if ($user->tasks()->count() > 0) {
-        //     return redirect()->route('user.index')->with('error', 'Não é possível excluir o usuário, pois ele possui tarefas vinculadas.');
-        // }
-        $user->delete();
-        return redirect()->route('user.index')->with('success', 'Usuário excluído com sucesso.');
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
+
+            DB::commit();
+            return redirect()->route('user.index')->with('flash_success', 'Usuário excluído com sucesso.');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Falha ao excluir o usuário: ' . $e->getMessage());
+            return redirect()->route('user.index')->with('flash_error', 'Falha ao excluir o usuário.');
+        }
     }
 }

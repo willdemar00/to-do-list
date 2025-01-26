@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -33,6 +34,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
+        DB::beginTransaction();
         try {
             $user->fill($request->validated());
 
@@ -50,8 +52,10 @@ class ProfileController extends Controller
 
             $user->save();
 
+            DB::commit();
             return Redirect::route('profile.edit')->with('flash_success', 'Perfil atualizado com sucesso.');
         } catch (Exception $e) {
+            DB::rollBack();
             Log::error('Falha na atualização do perfil: ' . $e->getMessage());
             return Redirect::route('profile.edit')->with('flash_error', 'Falha ao atualizar o perfil.');
         }
@@ -64,6 +68,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
+        DB::beginTransaction();
         try {
             if (!Hash::check($request->current_password, $user->password)) {
                 return Redirect::route('profile.edit')->with('flash_error', 'Senha atual incorreta.');
@@ -72,8 +77,10 @@ class ProfileController extends Controller
             $user->password = Hash::make($request->new_password);
             $user->save();
 
+            DB::commit();
             return Redirect::route('profile.edit')->with('flash_success', 'Senha atualizada com sucesso.');
         } catch (Exception $e) {
+            DB::rollBack();
             Log::error('Falha na atualização da senha: ' . $e->getMessage());
             return Redirect::route('profile.edit')->with('flash_error', 'Falha ao atualizar a senha.');
         }
@@ -86,6 +93,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
+        DB::beginTransaction();
         try {
             if (!Hash::check($request->password, $user->password)) {
                 return Redirect::route('profile.edit')->with('flash_error', 'Senha incorreta.');
@@ -98,8 +106,10 @@ class ProfileController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
+            DB::commit();
             return Redirect::to('/');
         } catch (Exception $e) {
+            DB::rollBack();
             Log::error('Falha na exclusão da conta: ' . $e->getMessage());
             return Redirect::route('profile.edit')->with('flash_error', 'Falha ao excluir a conta.');
         }
