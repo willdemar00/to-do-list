@@ -59,16 +59,16 @@
 @endsection
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <x-breadcrumb :items="[['name' => 'Início', 'route' => route('home')], ['name' => 'Perfil']]" />
-        </div>
-        <div class="col-md-12">
-            <h2>Configurações do perfil</h2>
-        </div>
-    </div>
 
-    <div class="container">
+<div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <x-breadcrumb :items="[['name' => 'Início', 'route' => route('home')], ['name' => 'Perfil']]" />
+            </div>
+            <div class="col-md-12">
+                <h3>Perfil</h3>
+            </div>
+        </div>
         <div class="card card-body p-4">
             <div class="row">
                 <div class="col-md-12">

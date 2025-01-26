@@ -1,4 +1,4 @@
-<div class="line-guide">
+<div class="line-guide px-0">
     <small>
         <ul>
             @foreach($items as $item)
