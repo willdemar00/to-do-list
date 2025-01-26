@@ -96,10 +96,9 @@
                                 <label for="password_confirmation" class="form-label">Confirmar Senha</label>
                                 <x-input name="password_confirmation" type="password" :attr="['class' => 'form-control', 'autocomplete' => 'new-password']" />
                             </div>
-                            <div class="d-flex justify-content-end">
-                                <div class="mt-2">
-                                    <button type="submit" class="btn btn-primary">Salvar</button>
-                                </div>
+                            <div class="d-flex justify-content-end mt-3 gap-2">
+                                <a href="{{ route('user.index') }}" class="btn btn-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-primary">Salvar</button>
                             </div>
                         </div>
                     </div>

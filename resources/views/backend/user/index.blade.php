@@ -3,14 +3,7 @@
 @section('title', 'Usuários')
 
 @section('styles')
-    <style>
-        .pagination-input {
-            width: 36px !important;
-            padding: 3px !important;
-            height: 36px;
-            text-align: center;
-        }
-    </style>
+
 @endsection
 
 @section('content')

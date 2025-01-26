@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ImageService
 {
-    public static function storeImage($imageFile, $model)
+    public static function storeImage($imageFile, $model) : Image
     {
         $path = $imageFile->store('images', 'public');
 
@@ -22,7 +22,7 @@ class ImageService
         return $image;
     }
 
-    public static function updateImage($newImageFile, $model)
+    public static function updateImage($newImageFile, $model): Image
     {
         $existingImage = $model->image;
 
