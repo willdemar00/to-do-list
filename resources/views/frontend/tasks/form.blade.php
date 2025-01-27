@@ -51,7 +51,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="date" class="form-label">Data</label>
-                                <x-input name="date" type="date" :value="old('date', isset($task) ? $task->date->format('Y-m-d') : '')" :attr="[
+                                <x-input name="date" type="date" :value="old('date', isset($task) && $task->date ? $task->date->format('Y-m-d') : '')" :attr="[
                                     'class' => 'form-control',
                                     'autocomplete' => 'date',
                                     'placeholder' => 'Data',
@@ -59,7 +59,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="start_time" class="form-label">Horário início</label>
-                                <x-input name="start_time" type="time" :value="old('start_time', isset($task) ? $task->start_time->format('H:i') : '')" :attr="[
+                                <x-input name="start_time" type="time" :value="old('start_time', isset($task) && $task->start_time ? $task->start_time->format('H:i') : '')" :attr="[
                                     'class' => 'form-control',
                                     'autocomplete' => 'start_time',
                                     'placeholder' => 'Horário Início',
@@ -67,7 +67,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="end_time" class="form-label">Horário final</label>
-                                <x-input name="end_time" type="time" :value="old('end_time', isset($task) ? $task->end_time->format('H:i') : '')" :attr="[
+                                <x-input name="end_time" type="time" :value="old('end_time', isset($task) && $task->end_time ? $task->end_time->format('H:i') : '')" :attr="[
                                     'class' => 'form-control',
                                     'autocomplete' => 'end_time',
                                     'placeholder' => 'Horário Final',

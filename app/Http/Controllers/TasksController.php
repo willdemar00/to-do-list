@@ -57,12 +57,11 @@ class TasksController extends Controller
             ->where('status', Tasks::STATUS_PENDING)
             ->when($request->filled('start_date'), function ($query) use ($request) {
                 $query->whereDate('date', Carbon::parse($request->input('start_date'))->format('Y-m-d'));
+            }, function ($query) {
+                $today = Carbon::today()->format('Y-m-d');
+                $query->where('date', $today);
             })
             ->get();
-            if (!$request->filled('start_date')) {
-                $today = Carbon::today()->format('Y-m-d');
-                $scheduledTasks = $scheduledTasks->where('date', $today);
-            }
 
         return view('frontend.tasks.index', compact('tasks', 'scheduledTasks'));
     }

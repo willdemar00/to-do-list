@@ -182,7 +182,8 @@
                                         $daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
                                         $currentDay = \Carbon\Carbon::now()->day;
                                         $currentWeekDay = \Carbon\Carbon::now()->dayOfWeek;
-                                        $selectedDate = request()->get('start_date') ?? \Carbon\Carbon::now()->toDateString();
+                                        $selectedDate =
+                                            request()->get('start_date') ?? \Carbon\Carbon::now()->toDateString();
                                     @endphp
                                     @for ($i = 0; $i < 7; $i++)
                                         @php
@@ -199,12 +200,15 @@
                             <div class="text-center mt-3">
                                 <strong>{{ $scheduledTasks->count() }} Compromissos Hoje</strong>
                             </div>
-                            <div class="timeline mt-3">
+                            <h6 class="mt-2">Tarefas Agendadas</h6>
+                            <div class="timeline mt-1">
                                 @forelse ($scheduledTasks as $scheduled)
                                     <div class="timeline-item  mb-1">
                                         <div class="timeline-marker"></div>
                                         <div class="timeline-content">
-                                            <p class="time">{{ $scheduled->start_time->format('H:i') }}</p>
+                                            <p class="time">
+                                                {{ $scheduled->start_time ? $scheduled->start_time->format('H:i') : $scheduled->created_at->format('H:i') }}
+                                            </p>
                                             <h5 class="text-truncate">{{ $scheduled->title }}</h5>
                                             <p class="text-truncate">{{ $scheduled->description }}</p>
                                             <div class="avatar-group p-2">
