@@ -7,6 +7,99 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+# Projeto To-Do List
+
+## Introdução
+Este é um projeto de lista de tarefas desenvolvido com Laravel.
+
+## Instalação
+1. Clone o repositório:
+    ```bash
+    git clone https://github.com/seu-usuario/to-do-list.git
+    cd to-do-list
+    ```
+
+2. Instale as dependências:
+    ```bash
+    composer install
+    npm install
+    ```
+
+3. Copie o arquivo `.env.example` para `.env` e configure suas variáveis de ambiente:
+    ```bash
+    cp .env.example .env
+    ```
+
+4. Gere a chave da aplicação:
+    ```bash
+    php artisan key:generate
+    ```
+
+5. Execute as migrações do banco de dados com as seeds:
+    ```bash
+    php artisan migrate --seed
+    ```
+
+6. Inicie o servidor de desenvolvimento:
+    ```bash
+    php artisan serve
+    ```
+
+## Configuração
+Certifique-se de configurar as seguintes variáveis no arquivo `.env`:
+- `DB_CONNECTION`
+- `DB_HOST`
+- `DB_PORT`
+- `DB_DATABASE`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+
+## Uso
+Para usar a aplicação, acesse `http://localhost:8000` no seu navegador. Você pode criar, editar e excluir tarefas.
+
+## Recuperação de Senha
+
+Para recuperar a senha, siga os passos abaixo:
+
+1. Acesse a página de recuperação de senha em `http://localhost:8000/forgot-password`.
+2. Insira o seu endereço de e-mail e clique em "Send Password Reset Link".
+3. Verifique seu e-mail para o link de redefinição de senha.
+4. Clique no link e você será redirecionado para a página de redefinição de senha.
+5. Insira a nova senha e confirme.
+
+Certifique-se de configurar corretamente as variáveis de ambiente para o envio de e-mails no arquivo `.env`:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_mailtrap_username
+MAIL_PASSWORD=your_mailtrap_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=your_email@example.com
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+## Estrutura do Projeto
+- `app/`: Contém os arquivos principais da aplicação.
+- `config/`: Contém os arquivos de configuração.
+- `database/`: Contém as migrações e seeds do banco de dados.
+- `public/`: Contém os arquivos públicos, como CSS e JavaScript.
+- `resources/`: Contém as views e assets da aplicação.
+- `routes/`: Contém os arquivos de rotas.
+- `tests/`: Contém os testes da aplicação.
+
+## Contribuição
+Para contribuir com este projeto, siga estas etapas:
+1. Faça um fork do repositório.
+2. Crie uma nova branch (`git checkout -b feature/nova-feature`).
+3. Faça suas alterações e commit (`git commit -am 'Adiciona nova feature'`).
+4. Envie para o repositório remoto (`git push origin feature/nova-feature`).
+5. Abra um Pull Request.
+
+## Licença
+Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
