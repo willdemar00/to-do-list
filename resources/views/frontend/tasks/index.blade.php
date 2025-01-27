@@ -8,7 +8,11 @@
             width: 23%;
             z-index: 9;
         }
+        #user-results {
+           cursor: pointer;
+        }
     </style>
+
 @endsection
 
 @section('content')
