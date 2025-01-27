@@ -49,7 +49,7 @@
                     <button class="btn btn-primary w-100" type="submit">Entrar</button>
                 </div>
                 <div class="col-md-12 text-center mt-3 d-md-none">
-                    <a href="{{ route('register') }}">Não possui cadastro?</a>
+                    <a href="{{ route('register') }}">Não possui cadastro</a>
                 </div>
             </div>
         </div>
