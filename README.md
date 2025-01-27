@@ -52,9 +52,9 @@ Este é um projeto de lista de tarefas desenvolvido com Laravel.
 
 ## Configuração
 Certifique-se de configurar as seguintes variáveis no arquivo `.env`:
-- `DB_CONNECTION`
-- `DB_HOST`
-- `DB_PORT`
+- `DB_CONNECTION=mysql`
+- `DB_HOST=127.0.0.1`
+- `DB_PORT=3306`
 - `DB_DATABASE`
 - `DB_USERNAME`
 - `DB_PASSWORD`
