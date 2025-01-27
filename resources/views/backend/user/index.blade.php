@@ -111,7 +111,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($users as $user)
+                            @forelse ($users as $user)
                                 <tr>
                                     <td>
                                         <div class="d-flex justify-content-start align-items-center gap-1">
@@ -158,7 +158,11 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">Nenhum usuário encontrado</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

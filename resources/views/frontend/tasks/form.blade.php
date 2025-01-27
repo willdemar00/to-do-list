@@ -182,14 +182,16 @@
 
             function addUserToSelectedList(userId, userName, userImage) {
                 var selectedUsers = $('#selected-users');
-                selectedUsers.append(
-                    '<div class="list-group-item d-flex justify-content-between align-items-center gap-2 selected-user" data-user-id="' +
-                    userId + '"><div class="d-flex align-items-center gap-2"><img src="' + userImage +
-                    '" alt="' + userName +
-                    '" class="rounded-circle border-primary mr-2" width="25" height="25">' + userName +
-                    '</div><button type="button" class="ml-auto remove-user"><i class="fa-solid fa-xmark"></i></button></div>'
-                );
-                updateSelectedUserIds();
+                if (selectedUsers.find('.selected-user[data-user-id="' + userId + '"]').length === 0) {
+                    selectedUsers.append(
+                        '<div class="list-group-item d-flex justify-content-between align-items-center gap-2 selected-user" data-user-id="' +
+                        userId + '"><div class="d-flex align-items-center gap-2"><img src="' + userImage +
+                        '" alt="' + userName +
+                        '" class="rounded-circle border-primary mr-2" width="25" height="25">' + userName +
+                        '</div><button type="button" class="ml-auto remove-user"><i class="fa-solid fa-xmark"></i></button></div>'
+                    );
+                    updateSelectedUserIds();
+                }
             }
 
             function updateSelectedUserIds() {
