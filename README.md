@@ -35,12 +35,17 @@ Este é um projeto de lista de tarefas desenvolvido com Laravel.
     php artisan key:generate
     ```
 
-5. Execute as migrações do banco de dados com as seeds:
+5. Crie o link simbólico para o armazenamento:
+    ```bash
+    php artisan storage:link
+    ```
+
+6. Execute as migrações do banco de dados com as seeds:
     ```bash
     php artisan migrate --seed
     ```
 
-6. Inicie o servidor de desenvolvimento:
+7. Inicie o servidor de desenvolvimento:
     ```bash
     php artisan serve
     ```
