@@ -21,8 +21,18 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $users = User::paginate(15);
-        return view('backend.user.index', compact('users')); 
+        $users = User::when($request->filled('name'), function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->input('name') . '%');
+            })
+            ->when($request->filled('email'), function ($query) use ($request) {
+                $query->where('email', 'like', '%' . $request->input('email') . '%');
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->input('status'));
+            })
+            ->orderBy('created_at')
+            ->paginate(15);
+        return view('backend.user.index', compact('users'));
     }
 
     /**

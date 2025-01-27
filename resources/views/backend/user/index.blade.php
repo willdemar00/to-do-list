@@ -28,18 +28,24 @@
                                 value="{{ !empty(request()->get('name')) ? request()->get('name') : '' }}">
                         </div>
                         <div class="col-md-3">
-                            <input type="email" name="email" class="form-control" placeholder="Email do Usuário"
+                            <input type="text" name="email" class="form-control" placeholder="Email do Usuário"
                                 value="{{ !empty(request()->get('email')) ? request()->get('email') : '' }}">
                         </div>
                         <div class="col-md-3">
-
+                            <select name="status" class="form-control">
+                                <option value="">Selecione o status</option>
+                                <option value="1" {{ request()->get('status') == '1' ? 'selected' : '' }}>Ativo</option>
+                                <option value="0" {{ request()->get('status') == '0' ? 'selected' : '' }}>Inativo</option>
+                            </select>
                         </div>
                         <div class="col-md-3">
                             <div class="d-flex justify-content-end align-items-center gap-2">
                                 <button type="submit" class="btn btn-sm btn-primary">Buscar</button>
-                                <a class="btn btn-sm btn-secondary" href="{{ route('user.index') }}">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </a>
+                                @if (!empty(request()->all()))
+                                    <a class="btn btn-sm btn-secondary" href="{{ route('user.index') }}">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -89,10 +95,12 @@
                                                     <li><a class="dropdown-item"
                                                             href="{{ route('user.edit', $user->id) }}">
                                                             <i class="fa-regular fa-pen-to-square"></i>
-                                                             Editar
+                                                            Editar
                                                         </a>
                                                     </li>
-                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <hr class="dropdown-divider">
+                                                    </li>
                                                     <li>
                                                         <form action="{{ route('user.destroy', $user->id) }}"
                                                             method="POST" class="delete-form">

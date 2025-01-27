@@ -49,9 +49,6 @@ class TasksController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($request->input('pagination', 15));
 
-
-
-
         return view('frontend.tasks.index', compact('tasks'));
     }
 
