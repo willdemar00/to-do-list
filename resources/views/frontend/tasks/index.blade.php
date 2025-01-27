@@ -200,7 +200,7 @@
                             <div class="text-center mt-3">
                                 <strong>{{ $scheduledTasks->count() }} Compromissos Hoje</strong>
                             </div>
-                            <h6 class="mt-2">Tarefas Agendadas</h6>
+                            <h6 class="mt-2">Tarefas agendadas</h6>
                             <div class="timeline mt-1">
                                 @forelse ($scheduledTasks as $scheduled)
                                     <div class="timeline-item  mb-1">

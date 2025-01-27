@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="recent-activity mt-4">
-                    <h4>Atividade Recente</h4>
+                    <h4>Atividade recente</h4>
                     <ul>
                         @foreach ($recentActivities as $activity)
                             <li>
