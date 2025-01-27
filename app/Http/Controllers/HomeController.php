@@ -32,12 +32,18 @@ class HomeController extends Controller
 
     private function calculateProgress(User $user, int $tasksCount): float
     {
-        $completedTasks = Tasks::where('responsible_id', $user->id)
+        $tasks = Tasks::where('responsible_id', $user->id)
             ->orWhereHas('involved', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
-            })->where('status', Tasks::STATUS_COMPLETED)->count();
+            })
+            ->get();
+        $totalTasks = $tasks->count();
 
-        return $tasksCount > 0 ? ($completedTasks / $tasksCount) * 100 : 0;
+        $completedTasks = $tasks->where('status', Tasks::STATUS_COMPLETED)->count();
+
+        $completionPercentage = $totalTasks > 0 ? ($completedTasks / $totalTasks) * 100 : 0;
+
+        return $completionPercentage;
     }
 
     private function generateMessage(float $progress): string
