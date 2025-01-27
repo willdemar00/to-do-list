@@ -20,7 +20,7 @@
         <div class="col-md-12 mb-2">
             <div class="d-flex justify-content-between align-items-center">
                 <h3>Tarefas</h3>
-                <a class="btn btn-primary" href="{{ route('tasks.create') }}">Adicionar</a>
+                <a class="btn btn-sm btn-primary" href="{{ route('tasks.create') }}">Adicionar</a>
             </div>
         </div>
     </div>

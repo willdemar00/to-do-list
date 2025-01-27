@@ -96,7 +96,13 @@ class ProfileController extends Controller
         DB::beginTransaction();
         try {
             if (!Hash::check($request->password, $user->password)) {
+                DB::rollBack();
                 return Redirect::route('profile.edit')->with('flash_error', 'Senha incorreta.');
+            }
+
+            if ($user->tasks()->exists() || $user->involved()->exists()) {
+                DB::rollBack();
+                return Redirect::route('profile.edit')->with('flash_error', 'Não é possível excluir o usuário, pois ele está relacionado a uma ou mais tarefas.');
             }
 
             Auth::logout();

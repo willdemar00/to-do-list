@@ -39,7 +39,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="title" class="form-label required">Título</label>
-                                <x-input name="title" type="text" :value="old('title', $task->title ?? '')" :attr="[
+                                <x-input name="title" type="text" :value="old('title', isset($task) ? $task->title : '')" :attr="[
                                     'class' => 'form-control',
                                     'autocomplete' => 'title',
                                     'placeholder' => 'Título',
@@ -47,11 +47,11 @@
                             </div>
                             <div class="col-md-12">
                                 <label for="description" class="form-label">Descrição</label>
-                                <x-textarea name="description" :value="old('description', $task->description ?? '')" :attr="['class' => 'form-control', 'rows' => '3', 'placeholder' => 'Descrição']" />
+                                <x-textarea name="description" :value="old('description', isset($task) ? $task->description : '')" :attr="['class' => 'form-control', 'rows' => '3', 'placeholder' => 'Descrição']" />
                             </div>
                             <div class="col-md-4">
                                 <label for="date" class="form-label">Data</label>
-                                <x-input name="date" type="date" :value="old('date', $task->date->format('Y-m-d') ?? '')" :attr="[
+                                <x-input name="date" type="date" :value="old('date', isset($task) ? $task->date->format('Y-m-d') : '')" :attr="[
                                     'class' => 'form-control',
                                     'autocomplete' => 'date',
                                     'placeholder' => 'Data',
@@ -59,7 +59,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="start_time" class="form-label">Horário início</label>
-                                <x-input name="start_time" type="time" :value="old('start_time', $task->start_time->format('H:i') ?? '')" :attr="[
+                                <x-input name="start_time" type="time" :value="old('start_time', isset($task) ? $task->start_time->format('H:i') : '')" :attr="[
                                     'class' => 'form-control',
                                     'autocomplete' => 'start_time',
                                     'placeholder' => 'Horário Início',
@@ -67,7 +67,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="end_time" class="form-label">Horário final</label>
-                                <x-input name="end_time" type="time" :value="old('end_time', $task->end_time->format('H:i') ?? '')" :attr="[
+                                <x-input name="end_time" type="time" :value="old('end_time', isset($task) ? $task->end_time->format('H:i') : '')" :attr="[
                                     'class' => 'form-control',
                                     'autocomplete' => 'end_time',
                                     'placeholder' => 'Horário Final',

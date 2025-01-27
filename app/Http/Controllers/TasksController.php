@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\TasksRequest;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class TasksController extends Controller
                 $query->where('title', 'like', '%' . $request->input('title') . '%');
             })
             ->when($request->filled('start_date'), function ($query) use ($request) {
-                $query->whereDate('date', \Carbon\Carbon::parse($request->input('start_date'))->format('Y-m-d'));
+                $query->whereDate('date', Carbon::parse($request->input('start_date'))->format('Y-m-d'));
             })
             ->where(function ($query) use ($request) {
                 $userId = Auth::id();
@@ -52,12 +53,16 @@ class TasksController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($request->input('pagination', 15));
 
-        $scheduledTasks = Tasks::whereNotNull('start_time')
+        $scheduledTasks = Tasks::whereNotNull('date')
             ->where('status', Tasks::STATUS_PENDING)
             ->when($request->filled('start_date'), function ($query) use ($request) {
-                $query->whereDate('date', \Carbon\Carbon::parse($request->input('start_date'))->format('Y-m-d'));
+                $query->whereDate('date', Carbon::parse($request->input('start_date'))->format('Y-m-d'));
             })
             ->get();
+            if (!$request->filled('start_date')) {
+                $today = Carbon::today()->format('Y-m-d');
+                $scheduledTasks = $scheduledTasks->where('date', $today);
+            }
 
         return view('frontend.tasks.index', compact('tasks', 'scheduledTasks'));
     }

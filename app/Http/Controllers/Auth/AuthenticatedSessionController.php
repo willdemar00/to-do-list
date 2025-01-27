@@ -37,6 +37,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = app('auth')->user();
+
+        if ($user->tasks()->exists() || $user->involved()->exists()) {
+            return redirect()->route('home')->with('flash_error', 'Não é possível excluir o usuário, pois ele está relacionado a uma ou mais tarefas.');
+        }
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

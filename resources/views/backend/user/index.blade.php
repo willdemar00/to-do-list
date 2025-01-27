@@ -8,6 +8,7 @@
             .card-body {
                 padding: 5px !important;
             }
+
         }
 
         @media (max-width: 950px) {
@@ -50,7 +51,7 @@
         <div class="col-md-12 mb-2">
             <div class="d-flex justify-content-between align-items-center">
                 <h3>Usuários</h3>
-                <a class="btn btn-primary" href="{{ route('user.create') }}">Adicionar</a>
+                <a class="btn btn-sm btn-primary" href="{{ route('user.create') }}">Adicionar</a>
             </div>
         </div>
     </div>
