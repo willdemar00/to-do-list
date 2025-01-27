@@ -1,6 +1,6 @@
 <section class="container-img">
     <div class="img-placeholder @error('image') is-invalid @enderror">
-        @if ($user->image)
+        @if (isset($user) && $user->image)
             <img src="{{ $user->path_image }}" alt="img-user">
         @else
             <img src="" alt="" style="display: none">

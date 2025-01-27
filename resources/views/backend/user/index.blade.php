@@ -25,11 +25,11 @@
                     <div class="row">
                         <div class="col-md-3">
                             <input type="text" name="name" class="form-control" placeholder="Nome do Usuário"
-                                value="{{ request('name') }}">
+                                value="{{ !empty(request()->get('name')) ? request()->get('name') : '' }}">
                         </div>
                         <div class="col-md-3">
                             <input type="email" name="email" class="form-control" placeholder="Email do Usuário"
-                                value="{{ request('email') }}">
+                                value="{{ !empty(request()->get('email')) ? request()->get('email') : '' }}">
                         </div>
                         <div class="col-md-3">
 
@@ -61,7 +61,7 @@
                             <tr>
                                 <th>Nome</th>
                                 <th>Email</th>
-                                <th>Email</th>
+                                <th>status</th>
                                 <th></th> <!-- Ações -->
                             </tr>
                         </thead>
@@ -73,11 +73,10 @@
                                             <img src="{{ $user->PathImage }}" alt="{{ $user->name }}"
                                                 class="rounded-circle border-primary" width="40" height="40">
                                             <span class="ms-2">{{ $user->name }}</span>
-                                            {{ $user->name }}
                                         </div>
                                     </td>
                                     <td>{{ $user->email }}</td>
-                                    <td>{{ $user->email }}</td>
+                                    <td>{!! $user->status() !!}</td>
                                     <td>
                                         <div class="d-flex justify-content-end">
                                             <div class="dropdown">

@@ -49,6 +49,13 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        if (Auth::user()->status !== \App\Models\User::STATUS_ACTIVE) {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => 'Sua conta não está ativa.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

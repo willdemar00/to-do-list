@@ -106,13 +106,25 @@
                                     <input type="hidden" name="selected_user_ids" id="selected-user-ids"
                                         value="{{ isset($task) && !$task->involved->isEmpty() ? $task->involved->pluck('id')->implode(',') : '' }}">
                                 </div>
-                                @if (isset($task) && isset($remove) && $remove)
+                                @if (isset($task) && $task->responsible_id == Auth::id())
                                     <div class="col-md-12 mt-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="remove_responsible"
                                                 id="remove_responsible">
                                             <label class="form-check-label" for="remove_responsible">
                                                 Remover responsável
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if (isset($task))
+                                    <div class="col-md-12 mt-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="status" id="status"
+                                                value="completed"
+                                                {{ isset($task) && $task->status == 'completed' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="status">
+                                                Marcar como concluída
                                             </label>
                                         </div>
                                     </div>
@@ -177,7 +189,7 @@
                     '" alt="' + userName +
                     '" class="rounded-circle border-primary mr-2" width="25" height="25">' + userName +
                     '</div><button type="button" class="ml-auto remove-user"><i class="fa-solid fa-xmark"></i></button></div>'
-                    );
+                );
                 updateSelectedUserIds();
             }
 

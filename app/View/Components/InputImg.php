@@ -9,10 +9,12 @@ use Illuminate\Contracts\View\View;
 
 class InputImg extends Component
 {
+    public ?User $user;
+
     /**
      * Create a new component instance.
      */
-    public function __construct( public User $user)
+    public function __construct(?User $user = null)
     {
         $this->user = $user;
     }

@@ -19,9 +19,38 @@ class TasksController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $tasks = Tasks::with(['user', 'involved'])->paginate(15);
+        $tasks = Tasks::with(['user', 'involved'])
+            ->when($request->filled('title'), function ($query) use ($request) {
+                $query->where('title', 'like', '%' . $request->input('title') . '%');
+            })
+            ->where(function ($query) use ($request) {
+                $userId = Auth::id();
+                if ($request->filled('selected_user_ids')) {
+                    // IDs selecionados
+                    $selectedUserIds = explode(',', $request->input('selected_user_ids'));
+
+                    // Tarefas relacionadas aos IDs selecionados (involved ou responsável)
+                    $query->where(function ($query) use ($selectedUserIds) {
+                        $query->whereHas('involved', function ($query) use ($selectedUserIds) {
+                            $query->whereIn('user_id', $selectedUserIds);
+                        })
+                            ->orWhereIn('responsible_id', $selectedUserIds);
+                    });
+                } else {
+                    // Tarefas relacionadas ao usuário logado (responsável ou envolvido)
+                    $query->where('responsible_id', $userId)
+                        ->orWhereHas('involved', function ($query) use ($userId) {
+                            $query->where('user_id', $userId);
+                        });
+                }
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->input('pagination', 15));
+
+
+
 
         return view('frontend.tasks.index', compact('tasks'));
     }
@@ -29,7 +58,7 @@ class TasksController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
         return view('frontend.tasks.form');
     }
@@ -77,9 +106,8 @@ class TasksController extends Controller
     public function edit(string $id): View
     {
         $task = Tasks::findOrFail($id);
-        $remove = $task->responsible_id == Auth::id();
 
-        return view('frontend.tasks.form', compact('task', 'remove'));
+        return view('frontend.tasks.form', compact('task'));
     }
 
     /**
@@ -112,6 +140,10 @@ class TasksController extends Controller
                 $task->involved()->sync([]);
             }
 
+            if ($request->has('status')) {
+                $fields['status'] = $request->input('status');
+            }
+
             $task->update($fields);
 
             DB::commit();
@@ -119,7 +151,7 @@ class TasksController extends Controller
             return redirect()->route('tasks.index')->with('flash_success', 'Tarefa atualizada com sucesso.');
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Ocorreu um erro ao atualizar a tarefa: '.$e->getMessage());
+            Log::error('Ocorreu um erro ao atualizar a tarefa: ' . $e->getMessage());
             return redirect()->back()->with('flash_error', 'Ocorreu um erro ao atualizar a tarefa');
         }
     }
@@ -155,6 +187,7 @@ class TasksController extends Controller
 
         $users = User::select('id', 'name')
             ->where('name', 'like', "%" . $request->input('query') . "%")
+            ->where('status', User::STATUS_ACTIVE)
             ->limit(5)
             ->get();
 

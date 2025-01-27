@@ -2,6 +2,13 @@
 
 @section('title', 'Tarefas')
 @section('styles')
+<style>
+    .list-group{
+        position: absolute;
+        width: 370px;
+        z-index: 9;
+    }
+</style>
 
 @endsection
 
@@ -22,25 +29,42 @@
     <div class="row mb-3">
         <div class="col-md-12">
             <div class="card card-body">
-                <form action="{{ route('user.index') }}" method="GET" class="form-inline">
+                <form action="{{ route('tasks.index') }}" method="GET" class="form-inline">
                     <div class="row">
                         <div class="col-md-3">
-                            <input type="text" name="name" class="form-control" placeholder="Nome do Usuário"
-                                value="{{ request('name') }}">
+                            <input type="text" name="title" class="form-control" placeholder="Nome da tarefa"
+                                value="{{ !empty(request()->get('title')) ? request()->get('title') : '' }}">
                         </div>
                         <div class="col-md-3">
-                            <input type="email" name="email" class="form-control" placeholder="Email do Usuário"
-                                value="{{ request('email') }}">
+                            <input type="text" id="user-search" class="form-control" placeholder="Buscar usuários">
+                            <div id="user-results" class="mt-2 list-group"></div>
+                            <input type="hidden" name="selected_user_ids" id="selected_user_ids" value="{{ request()->get('selected_user_ids') }}">
                         </div>
                         <div class="col-md-3">
-
+                            <div id="selected-users" class="mt-2 d-flex flex-wrap gap-2">
+                                @if(request()->filled('selected_user_ids'))
+                                    @foreach(explode(',', request()->get('selected_user_ids')) as $userId)
+                                        @php
+                                            $user = \App\Models\User::find($userId);
+                                        @endphp
+                                        @if($user)
+                                            <div class="badge bg-primary selected-user" data-id="{{ $user->id }}">
+                                                {{ $user->name }} <span class="remove-user" style="cursor:pointer;">&times;</span>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </div>
                         </div>
                         <div class="col-md-3">
                             <div class="d-flex justify-content-end align-items-center gap-2">
                                 <button type="submit" class="btn btn-sm btn-primary">Buscar</button>
-                                <a class="btn btn-sm btn-secondary" href="{{ route('user.index') }}">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </a>
+                                @if (!empty(request()->all()))
+                                    <a class="btn btn-sm btn-secondary" href="{{ route('tasks.index') }}">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </a>
+                                @endif
+
                             </div>
                         </div>
                     </div>
@@ -63,19 +87,23 @@
                                 <div class="component-card">
                                     <div class="form-check m-0">
                                         <input class="form-check-input status" type="checkbox" value="{{ $task->id }}"
-                                            id="{{ $task->id }}" {{ $task->status == App\Models\Tasks::STATUS_COMPLETED ? 'checked' : '' }}>
+                                            id="{{ $task->id }}"
+                                            {{ $task->status == App\Models\Tasks::STATUS_COMPLETED ? 'checked' : '' }}>
                                     </div>
-                                    <label for="{{ $task->id }}" class="form-check-label text-truncate " style="cursor: pointer;">
+                                    <label for="{{ $task->id }}" class="form-check-label text-truncate "
+                                        style="cursor: pointer;">
                                         <strong class="task-title ">{{ $task->title }}</strong>
                                     </label>
                                     <div class="avatar-group">
                                         <div class="avatar-wrapper">
-                                            <img src="{{ $task->user->path_image }}" alt="{{ $task->user->name }}" class="avatar">
+                                            <img src="{{ $task->user->path_image }}" alt="{{ $task->user->name }}"
+                                                class="avatar">
                                             <span class="avatar-tooltip">{{ $task->user->name }}</span>
                                         </div>
                                         @foreach ($task->involved->take(4) as $user)
                                             <div class="avatar-wrapper">
-                                                <img src="{{ $user->path_image }}" alt="{{ $user->name }}" class="avatar">
+                                                <img src="{{ $user->path_image }}" alt="{{ $user->name }}"
+                                                    class="avatar">
                                                 <span class="avatar-tooltip">{{ $user->name }}</span>
                                             </div>
                                         @endforeach
@@ -177,10 +205,11 @@
                 var componentCard = $(this).closest('.component-card');
                 var taskTitle = componentCard.find('.task-title');
                 var taskId = $(this).val();
-                var status = $(this).is(':checked') ? '{{ App\Models\Tasks::STATUS_COMPLETED }}' : '{{ App\Models\Tasks::STATUS_PENDING }}';
+                var status = $(this).is(':checked') ? '{{ App\Models\Tasks::STATUS_COMPLETED }}' :
+                    '{{ App\Models\Tasks::STATUS_PENDING }}';
 
                 $.ajax({
-                    url: '{{ route("tasks.updateStatus") }}',
+                    url: '{{ route('tasks.updateStatus') }}',
                     method: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
@@ -224,6 +253,58 @@
             $('.confirm-delete').on('click', function() {
                 deleteButton.attr('type', 'submit');
                 deleteButton.closest('form').submit();
+            });
+
+            $('#user-search').on('input', function() {
+                var query = $(this).val();
+                if (query.length > 2) {
+                    $.ajax({
+                        url: '{{ route('users.search') }}',
+                        method: 'GET',
+                        data: { query: query },
+                        success: function(response) {
+                            var results = $('#user-results');
+                            results.empty();
+                            response.forEach(function(user) {
+                                results.append('<div class="list-group-item list-group-item-action user-result" data-id="' + user.id + '">' + user.name + '</div>');
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('#user-search').on('blur', function() {
+                setTimeout(function() {
+                    $('#user-results').empty();
+                }, 200);
+            });
+
+            $(document).on('click', '.user-result', function() {
+                var userId = $(this).data('id');
+                var userName = $(this).text();
+                var selectedUsers = $('#selected-users');
+                var selectedUserIds = $('#selected_user_ids').val().split(',').filter(Boolean);
+
+                if (!selectedUserIds.includes(userId.toString())) {
+                    selectedUsers.append('<div class="badge bg-primary selected-user" data-id="' + userId + '">' + userName + ' <span class="remove-user" style="cursor:pointer;">&times;</span></div>');
+                    selectedUserIds.push(userId);
+                    $('#selected_user_ids').val(selectedUserIds.join(','));
+                    $('#user-search').val('');
+                    $('#user-results').empty();
+                }
+            });
+
+            $(document).on('click', '.remove-user', function() {
+                var userDiv = $(this).parent();
+                var userId = userDiv.data('id');
+                var selectedUserIds = $('#selected_user_ids').val().split(',');
+
+                selectedUserIds = selectedUserIds.filter(function(id) {
+                    return id != userId;
+                });
+
+                $('#selected_user_ids').val(selectedUserIds.join(','));
+                userDiv.remove();
             });
         });
     </script>

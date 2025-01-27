@@ -27,6 +27,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'status',
         'password',
     ];
 
@@ -52,6 +53,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
 
     public function getPathImageAttribute(): string
     {
@@ -80,5 +84,12 @@ class User extends Authenticatable
     public function involved(): BelongsToMany
     {
         return $this->belongsToMany(Tasks::class, 'task_user', 'user_id', 'task_id');
+    }
+
+    public function status(): string
+    {
+        return $this->status == self::STATUS_ACTIVE
+            ? '<span class="badge bg-success">Ativo</span>'
+            : '<span class="badge bg-danger">Inativo</span>';
     }
 }

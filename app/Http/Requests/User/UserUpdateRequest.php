@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\User;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
-class NewPasswordRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,20 +24,22 @@ class NewPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email', 'max:200'],
+            'name' => ['required', 'string', 'min:3', 'max:200'],
+            'email' => ['required', 'string', 'email', 'max:200', 'unique:' . User::class . ',email,' . $this->route('user')],
             'password' => [
-                'required',
+                'nullable',
                 'string',
                 Password::min(8) // mínimo de 8 caracteres
                     ->letters() // Deve conter pelo menos uma letra
                     ->numbers() // Deve conter pelo menos um número
                     ->symbols(), // Deve conter pelo menos um símbolo
-                    // ->uncompromised(), // Verifica se a senha não foi vazada em um banco de dados público
+                // ->uncompromised(), // Verifica se a senha não foi vazada em um banco de dados público
                 'confirmed', // Garante que password_confirmation corresponde
             ],
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
-    
+
     public function messages(): array
     {
         return [
@@ -49,15 +52,19 @@ class NewPasswordRequest extends FormRequest
             'confirmed' => 'A confirmação de :attribute não corresponde',
             'min' => ':attribute deve ter no mínimo :min caracteres',
             'max' => ':attribute deve ter no máximo :max caracteres',
+            'image' => 'O arquivo deve ser uma imagem.',
+            'mimes' => ':attribute deve ser do tipo: :values.',
+            'image.max' => ':attribute não pode ter mais de :max kilobytes.',
         ];
     }
 
     public function attributes()
     {
         return [
+            'name' => 'nome',
             'email' => 'email',
             'password' => 'senha',
+            'image' => 'imagem',
         ];
-        
     }
 }

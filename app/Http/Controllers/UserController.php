@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisteredRequest;
+use App\Http\Requests\User\UserUpdateRequest;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ class UserController extends Controller
         try {
             $data = $request->all();
             $data['password'] = Hash::make($request->password);
+            $data['status'] = $request->boolean('status');
 
             $user = User::create($data);
 
@@ -69,12 +71,13 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request, string $id)
     {
         DB::beginTransaction();
         try {
             $user = User::findOrFail($id);
             $data = $request->all();
+
             if ($request->filled('password')) {
                 $data['password'] = Hash::make($request->password);
             } else {
@@ -88,6 +91,7 @@ class UserController extends Controller
                     ImageService::storeImage($request->file('image'), $user);
                 }
             }
+            $data['status'] = $request->boolean('status');
 
             $user->update($data);
 
@@ -108,6 +112,12 @@ class UserController extends Controller
         DB::beginTransaction();
         try {
             $user = User::findOrFail($id);
+
+            if ($user->tasks()->exists() || $user->involved()->exists()) {
+                DB::rollBack();
+                return redirect()->route('user.index')->with('flash_error', 'Não é possível excluir o usuário, pois ele está relacionado a uma ou mais tarefas.');
+            }
+
             $user->delete();
 
             DB::commit();
