@@ -1,6 +1,6 @@
 @extends('frontend.app')
 
-@section('title', isset($user) ? 'Editar Usuário' : 'Adicionar Usuário')
+@section('title', isset($user) ? 'Editar usuário' : 'Adicionar usuário')
 
 @section('styles')
     <style>
@@ -56,6 +56,12 @@
             width: 100%;
             gap: 20px;
         }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+                justify-items: center;
+            }
+        }
     </style>
 @endsection
 
@@ -66,13 +72,13 @@
                 <x-breadcrumb :items="[['name' => 'Início', 'route' => route('home')], ['name' => 'Usuários', 'route' => route('user.index')], ['name' => isset($user) ? 'Editar Usuário' : 'Adicionar Usuário']]" />
             </div>
             <div class="col-md-12">
-                <h3>{{ isset($user) ? 'Editar Usuário' : 'Adicionar Usuário' }}</h3>
+                <h3>{{ isset($user) ? 'Editar usuário' : 'Adicionar usuário' }}</h3>
             </div>
         </div>
         <div class="card card-body p-4">
             <div class="row">
                 <div class="col-md-12">
-                    <h6 class="mb-2">Informações Pessoais</h6>
+                    <h6 class="mb-2">Informações pessoais</h6>
                 </div>
                 <hr>
                 <form method="POST" action="{{ isset($user) ? route('user.update', $user->id) : route('user.store') }}" enctype="multipart/form-data">
@@ -96,7 +102,7 @@
                                 <x-input name="password" type="password" :attr="['class' => 'form-control', 'autocomplete' => 'new-password']" />
                             </div>
                             <div class="col-md-6">
-                                <label for="password_confirmation" class="form-label">Confirmar Senha</label>
+                                <label for="password_confirmation" class="form-label">Confirmar senha</label>
                                 <x-input name="password_confirmation" type="password" :attr="['class' => 'form-control', 'autocomplete' => 'new-password']" />
                             </div>
                             <div class="col-md-6">

@@ -25,6 +25,9 @@ class TasksController extends Controller
             ->when($request->filled('title'), function ($query) use ($request) {
                 $query->where('title', 'like', '%' . $request->input('title') . '%');
             })
+            ->when($request->filled('start_date'), function ($query) use ($request) {
+                $query->whereDate('date', \Carbon\Carbon::parse($request->input('start_date'))->format('Y-m-d'));
+            })
             ->where(function ($query) use ($request) {
                 $userId = Auth::id();
                 if ($request->filled('selected_user_ids')) {
@@ -49,7 +52,14 @@ class TasksController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($request->input('pagination', 15));
 
-        return view('frontend.tasks.index', compact('tasks'));
+        $scheduledTasks = Tasks::whereNotNull('start_time')
+            ->where('status', Tasks::STATUS_PENDING)
+            ->when($request->filled('start_date'), function ($query) use ($request) {
+                $query->whereDate('date', \Carbon\Carbon::parse($request->input('start_date'))->format('Y-m-d'));
+            })
+            ->get();
+
+        return view('frontend.tasks.index', compact('tasks', 'scheduledTasks'));
     }
 
     /**

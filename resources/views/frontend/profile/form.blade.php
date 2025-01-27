@@ -55,6 +55,14 @@
             width: 100%;
             gap: 20px;
         }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+                justify-items: center;
+
+            }
+        }
     </style>
 @endsection
 
@@ -72,7 +80,7 @@
         <div class="card card-body p-4">
             <div class="row">
                 <div class="col-md-12">
-                    <h6 class="mb-2">Informações Pessoais</h6>
+                    <h6 class="mb-2">Informações pessoais</h6>
                 </div>
                 <hr>
                 <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">

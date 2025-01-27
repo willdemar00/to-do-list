@@ -3,7 +3,43 @@
 @section('title', 'Usuários')
 
 @section('styles')
+    <style>
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 5px !important;
+            }
+        }
 
+        @media (max-width: 950px) {
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .custom-table {
+                width: 100%;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .custom-table th,
+            .custom-table td {
+                min-width: 25px;
+            }
+
+            .custom-table tbody td {
+                padding: 5px;
+            }
+
+            .text-truncate {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 135px;
+                /* Adjust as needed */
+            }
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -34,8 +70,10 @@
                         <div class="col-md-3">
                             <select name="status" class="form-control">
                                 <option value="">Selecione o status</option>
-                                <option value="1" {{ request()->get('status') == '1' ? 'selected' : '' }}>Ativo</option>
-                                <option value="0" {{ request()->get('status') == '0' ? 'selected' : '' }}>Inativo</option>
+                                <option value="1" {{ request()->get('status') == '1' ? 'selected' : '' }}>Ativo
+                                </option>
+                                <option value="0" {{ request()->get('status') == '0' ? 'selected' : '' }}>Inativo
+                                </option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -67,8 +105,8 @@
                             <tr>
                                 <th>Nome</th>
                                 <th>Email</th>
-                                <th>status</th>
-                                <th></th> <!-- Ações -->
+                                <th style="width: 72px">status</th>
+                                <th style="width: 50px"></th> <!-- Ações -->
                             </tr>
                         </thead>
                         <tbody>
@@ -78,18 +116,18 @@
                                         <div class="d-flex justify-content-start align-items-center gap-1">
                                             <img src="{{ $user->PathImage }}" alt="{{ $user->name }}"
                                                 class="rounded-circle border-primary" width="40" height="40">
-                                            <span class="ms-2">{{ $user->name }}</span>
+                                            <span class="ms-2 text-truncate">{{ $user->name }}</span>
                                         </div>
                                     </td>
-                                    <td>{{ $user->email }}</td>
+                                    <td class="text-truncate">{{ $user->email }}</td>
                                     <td>{!! $user->status() !!}</td>
                                     <td>
                                         <div class="d-flex justify-content-end">
                                             <div class="dropdown">
-                                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                                <button class="btn-menu dropdown-toggle" type="button"
                                                     id="dropdownMenuButton1" data-bs-toggle="dropdown"
                                                     aria-expanded="false">
-                                                    Ações
+                                                    <i class="fa-solid fa-ellipsis-vertical"></i>
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                     <li><a class="dropdown-item"
@@ -108,7 +146,7 @@
                                                             @method('DELETE')
                                                             <button type="button" data-bs-toggle="modal"
                                                                 data-bs-target="#deleteModal"
-                                                                class="dropdown-item delete-button">
+                                                                class="dropdown-item  delete-button">
                                                                 <i class="fa-regular fa-trash-can"></i>
                                                                 Excluir
                                                             </button>

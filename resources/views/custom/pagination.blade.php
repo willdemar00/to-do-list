@@ -24,8 +24,10 @@
                     @foreach ($element as $page => $url)
                         @if ($page == $paginator->currentPage())
                             <li class="page-item active" aria-current="page"><span class="page-link">{{ $page }}</span></li>
-                        @else
+                        @elseif ($page == 1 || $page == 2 || $page == $paginator->lastPage() || $page == $paginator->lastPage() - 1 || ($page >= $paginator->currentPage() - 2 && $page <= $paginator->currentPage() + 2))
                             <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
+                        @elseif ($page == 3 || $page == $paginator->lastPage() - 2)
+                            <li class="page-item disabled" aria-disabled="true"><span class="page-link">...</span></li>
                         @endif
                     @endforeach
                 @endif
@@ -50,3 +52,17 @@
     Exibindo Página {{ $paginator->currentPage() }} de {{ $paginator->lastPage() }}. Total de Registros:
     {{ $paginator->total() }}
 </div>
+
+<style>
+    @media (max-width: 950px) {
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pagination-info {
+            text-align: center;
+            font-size: 0.9em;
+        }
+    }
+</style>

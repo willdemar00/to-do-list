@@ -2,14 +2,13 @@
 
 @section('title', 'Tarefas')
 @section('styles')
-<style>
-    .list-group{
-        position: absolute;
-        width: 370px;
-        z-index: 9;
-    }
-</style>
-
+    <style>
+        .list-group {
+            position: absolute;
+            width: 23%;
+            z-index: 9;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -29,34 +28,42 @@
     <div class="row mb-3">
         <div class="col-md-12">
             <div class="card card-body">
-                <form action="{{ route('tasks.index') }}" method="GET" class="form-inline">
+                <form id="task-search-form" action="{{ route('tasks.index') }}" method="GET" class="form-inline">
                     <div class="row">
                         <div class="col-md-3">
                             <input type="text" name="title" class="form-control" placeholder="Nome da tarefa"
                                 value="{{ !empty(request()->get('title')) ? request()->get('title') : '' }}">
                         </div>
+                        <div class="col-md-2">
+                            <input type="date" name="start_date" id="start_date" class="form-control"
+                                value="{{ request()->get('start_date') }}">
+
+                        </div>
                         <div class="col-md-3">
                             <input type="text" id="user-search" class="form-control" placeholder="Buscar usuários">
                             <div id="user-results" class="mt-2 list-group"></div>
-                            <input type="hidden" name="selected_user_ids" id="selected_user_ids" value="{{ request()->get('selected_user_ids') }}">
+                            <input type="hidden" name="selected_user_ids" id="selected_user_ids"
+                                value="{{ request()->get('selected_user_ids') }}">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div id="selected-users" class="mt-2 d-flex flex-wrap gap-2">
-                                @if(request()->filled('selected_user_ids'))
-                                    @foreach(explode(',', request()->get('selected_user_ids')) as $userId)
+                                @if (request()->filled('selected_user_ids'))
+                                    @foreach (explode(',', request()->get('selected_user_ids')) as $userId)
                                         @php
                                             $user = \App\Models\User::find($userId);
                                         @endphp
-                                        @if($user)
+                                        @if ($user)
                                             <div class="badge bg-primary selected-user" data-id="{{ $user->id }}">
-                                                {{ $user->name }} <span class="remove-user" style="cursor:pointer;">&times;</span>
+                                                {{ $user->name }} <span class="remove-user"
+                                                    style="cursor:pointer;">&times;</span>
                                             </div>
                                         @endif
                                     @endforeach
                                 @endif
                             </div>
                         </div>
-                        <div class="col-md-3">
+
+                        <div class="col-md-2">
                             <div class="d-flex justify-content-end align-items-center gap-2">
                                 <button type="submit" class="btn btn-sm btn-primary">Buscar</button>
                                 @if (!empty(request()->all()))
@@ -167,7 +174,51 @@
                     </div>
                     <div class="col-md-4">
                         <div class="card p-2">
-                            teste
+                            <h4 class="text-center">{{ \Carbon\Carbon::now()->locale('pt_BR')->translatedFormat('F Y') }}
+                            </h4>
+                            <div class="container-week-selector">
+                                <div class="d-flex justify-content-between w-75">
+                                    @php
+                                        $daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+                                        $currentDay = \Carbon\Carbon::now()->day;
+                                        $currentWeekDay = \Carbon\Carbon::now()->dayOfWeek;
+                                        $selectedDate = request()->get('start_date') ?? \Carbon\Carbon::now()->toDateString();
+                                    @endphp
+                                    @for ($i = 0; $i < 7; $i++)
+                                        @php
+                                            $date = \Carbon\Carbon::now()->startOfWeek()->addDays($i);
+                                            $isSelected = $selectedDate == $date->toDateString();
+                                        @endphp
+                                        <div class="text-center day-selector {{ $isSelected ? 'bg-primary text-white' : '' }}"
+                                            data-date="{{ $date->toDateString() }}">
+                                            {{ $daysOfWeek[$i] }}<br>{{ $date->day }}
+                                        </div>
+                                    @endfor
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <strong>{{ $scheduledTasks->count() }} Compromissos Hoje</strong>
+                            </div>
+                            <div class="timeline mt-3">
+                                @forelse ($scheduledTasks as $scheduled)
+                                    <div class="timeline-item  mb-1">
+                                        <div class="timeline-marker"></div>
+                                        <div class="timeline-content">
+                                            <p class="time">{{ $scheduled->start_time->format('H:i') }}</p>
+                                            <h5 class="text-truncate">{{ $scheduled->title }}</h5>
+                                            <p class="text-truncate">{{ $scheduled->description }}</p>
+                                            <div class="avatar-group p-2">
+                                                @foreach ($scheduled->involved as $user)
+                                                    <img src="{{ $user->path_image }}" alt="{{ $user->name }}"
+                                                        class="avatar">
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="px-2">Nenhum compromisso agendado para hoje.</p>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -219,10 +270,10 @@
                     success: function(response) {
                         if (response.success) {
                             if (status === '{{ App\Models\Tasks::STATUS_COMPLETED }}') {
-                                componentCard.css('opacity', '0.4');
+                                componentCard.addClass('opacity-40');
                                 taskTitle.css('text-decoration', 'line-through');
                             } else {
-                                componentCard.css('opacity', '1');
+                                componentCard.removeClass('opacity-40');
                                 taskTitle.css('text-decoration', 'none');
                             }
                         } else {
@@ -240,7 +291,7 @@
                 var componentCard = $(this).closest('.component-card');
                 var taskTitle = componentCard.find('.task-title');
                 if ($(this).is(':checked')) {
-                    componentCard.css('opacity', '0.4');
+                    componentCard.addClass('opacity-40');
                     taskTitle.css('text-decoration', 'line-through');
                 }
             });
@@ -261,12 +312,16 @@
                     $.ajax({
                         url: '{{ route('users.search') }}',
                         method: 'GET',
-                        data: { query: query },
+                        data: {
+                            query: query
+                        },
                         success: function(response) {
                             var results = $('#user-results');
                             results.empty();
                             response.forEach(function(user) {
-                                results.append('<div class="list-group-item list-group-item-action user-result" data-id="' + user.id + '">' + user.name + '</div>');
+                                results.append(
+                                    '<div class="list-group-item list-group-item-action user-result" data-id="' +
+                                    user.id + '">' + user.name + '</div>');
                             });
                         }
                     });
@@ -286,7 +341,9 @@
                 var selectedUserIds = $('#selected_user_ids').val().split(',').filter(Boolean);
 
                 if (!selectedUserIds.includes(userId.toString())) {
-                    selectedUsers.append('<div class="badge bg-primary selected-user" data-id="' + userId + '">' + userName + ' <span class="remove-user" style="cursor:pointer;">&times;</span></div>');
+                    selectedUsers.append('<div class="badge bg-primary selected-user" data-id="' + userId +
+                        '">' + userName +
+                        ' <span class="remove-user" style="cursor:pointer;">&times;</span></div>');
                     selectedUserIds.push(userId);
                     $('#selected_user_ids').val(selectedUserIds.join(','));
                     $('#user-search').val('');
@@ -305,6 +362,12 @@
 
                 $('#selected_user_ids').val(selectedUserIds.join(','));
                 userDiv.remove();
+            });
+
+            $('.day-selector').on('click', function() {
+                var selectedDate = $(this).data('date');
+                $('#start_date').val(selectedDate);
+                $('#task-search-form').submit();
             });
         });
     </script>
