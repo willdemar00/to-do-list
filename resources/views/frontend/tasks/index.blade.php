@@ -322,13 +322,19 @@
                         success: function(response) {
                             var results = $('#user-results');
                             results.empty();
-                            response.forEach(function(user) {
-                                results.append(
-                                    '<div class="list-group-item list-group-item-action user-result" data-id="' +
-                                    user.id + '">' + user.name + '</div>');
-                            });
+                            if (response.length > 0) {
+                                response.forEach(function(user) {
+                                    results.append(
+                                        '<div class="list-group-item list-group-item-action user-result" data-id="' +
+                                        user.id + '">' + user.name + '</div>');
+                                });
+                            } else {
+                                results.append('<div class="list-group-item">Nenhum usuário encontrado</div>');
+                            }
                         }
                     });
+                } else {
+                    $('#user-results').empty();
                 }
             });
 
