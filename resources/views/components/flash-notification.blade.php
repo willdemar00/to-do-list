@@ -23,10 +23,10 @@
             messagem.classList.add('slide');
 
             if (messagem.classList.contains('flash-success')) {
-                let successAudio = new Audio('{{ asset('build/assets/audio/success.mp3') }}');
+                let successAudio = new Audio('{{ asset('assets/audio/success.mp3') }}');
                 successAudio.play();
             } else if (messagem.classList.contains('flash-error')) {
-                let errorAudio = new Audio('{{ asset('build/assets/audio/error.mp3') }}');
+                let errorAudio = new Audio('{{ asset('assets/audio/error.mp3') }}');
                 errorAudio.play();
             }
 

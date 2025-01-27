@@ -196,5 +196,5 @@
     @endsection
 
     @section('script')
-        <script src="{{ asset('build/assets/js/file.js') }}"></script>
+        <script src="{{ asset('assets/js/file.js') }}"></script>
     @endsection

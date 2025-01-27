@@ -1,0 +1,73 @@
+.flash-error,
+.flash-success {
+    position: fixed;
+    right: 5px;
+    top: -200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    font-weight: bolder;
+    color: var(--bg-white);
+    font-size: .9em;
+    gap: 10px;
+    max-width: 92.5%;
+}
+
+.flash-error {
+    background-color: #d81010;
+}
+
+.alert-error {
+    background: rgba(216, 16, 16, 0.3);
+    color: rgba(216, 16, 16, 1);
+}
+
+.flash-success {
+    background-color: #339966;
+}
+
+.alert-success {
+    background: rgba(51, 153, 102, 0.3);
+    color: rgba(51, 153, 102, 1);
+}
+
+.flash-error.slide,
+.flash-success.slide {
+    animation: slide .8s ease-in-out forwards;
+    z-index: 9;
+}
+
+.flash-error.slide-closed,
+.flash-success.slide-closed {
+    animation: slide-closed .8s ease-in-out forwards;
+    z-index: 9;
+}
+
+@keyframes slide {
+    0% {
+        top: 0px;
+    }
+
+    100% {
+        top: 83px;
+    }
+}
+
+@keyframes slide-closed {
+    0% {
+        top: 83px;
+    }
+
+    100% {
+        top: 0px;
+    }
+}
+@media screen and (max-width: 800px) {
+
+    .flash-error,
+    .flash-success {
+        max-width: 92.5%;
+    }
+}

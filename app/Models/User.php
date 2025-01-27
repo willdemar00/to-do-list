@@ -59,7 +59,7 @@ class User extends Authenticatable
 
     public function getPathImageAttribute(): string
     {
-        return !empty($this->image) ? asset('storage/' . $this->image->path) : asset('build/assets/img/Profile_avatar_placeholder.png');
+        return !empty($this->image) ? asset('storage/' . $this->image->path) : asset('assets/img/Profile_avatar_placeholder.png');
     }
 
     public function roles(): BelongsToMany
