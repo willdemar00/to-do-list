@@ -15,7 +15,7 @@ Este é um projeto de lista de tarefas desenvolvido com Laravel.
 ## Instalação
 1. Clone o repositório:
     ```bash
-    https://github.com/willdemar00/to-do-list.git
+    git clone https://github.com/willdemar00/to-do-list.git
     cd to-do-list
     ```
 
